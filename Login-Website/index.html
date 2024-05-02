@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>telnet Login</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .error-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="leaves">
+            <div class="set">
+                <div><img src="snow_1.png"></div>
+                <div><img src="leaf_02.png"></div>
+                <div><img src="leaf_03.png"></div>
+                <div><img src="leaf_04.png"></div>
+                <div><img src="leaf_01.png"></div>
+                <div><img src="leaf_02.png"></div>
+                <div><img src="leaf_03.png"></div>
+                <div><img src="leaf_04.png"></div>
+            </div>
+        </div>
+        <img src="bg.jpg" class="bg">
+        <img src="girl.png" class="girl">
+        <img src="trees.png" class="trees">
+        <div class="login">
+            <h2>Login</h2>
+            <form action="#" method="POST" onsubmit="return checkTelnet()">
+                <div class="inputBox">
+                    <input type="text" name="hostname" id="hostname" placeholder="Hostname">
+                </div>
+                <div class="inputBox">
+                    <input type="text" name="port" id="port" placeholder="Port">
+                </div>
+                <div class="inputBox">
+                    <input type="submit" value="Login" id="btn">
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <div id="errorPopup" class="error-popup">
+        กรุณากรอกข้อมูลด้วยครับ
+    </div>
+
+    <script>
+        function checkForm() {
+            var hostname = document.getElementById("hostname").value.trim();
+            var port = document.getElementById("port").value.trim();
+
+            if (hostname === "" || port === "") {
+                document.getElementById("errorPopup").style.display = "block";
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+
+        function checkTelnet() {
+            if (checkForm()) {
+                var hostname = document.getElementById("hostname").value.trim();
+                var port = document.getElementById("port").value.trim();
+
+                // ทำการตรวจสอบการเชื่อมต่อ Telnet ไปยัง MailDev Docker Container ที่รันอยู่ที่ Hostname และ Port ที่ระบุ
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        if (this.responseText === "success") {
+                            window.location.href = "next_page.html"; // เมื่อสำเร็จให้เปลี่ยนเส้นทางไปยังหน้าถัดไป
+                        } else {
+                            alert("ไม่สามารถเชื่อมต่อไปยัง MailDev ได้");
+                        }
+                    }
+                };
+                xhttp.open("GET", "check_telnet.php?hostname=" + hostname + "&port=" + port, true);
+                xhttp.send();
+            }
+            return false; // Prevent form submission
+        }
+    </script>
+</body>
+</html>
